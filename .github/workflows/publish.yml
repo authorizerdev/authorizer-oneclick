@@ -20,7 +20,9 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  IMAGE: ghcr.io/authorizerdev/authorizer-oneclick
+  # Docker Hub, next to the main image (docker.io/lakhansamani/authorizer).
+  # Docker Hub repositories are public, so deploy buttons can pull anonymously.
+  IMAGE: docker.io/lakhansamani/authorizer-oneclick
 
 jobs:
   build:
@@ -28,7 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -70,13 +71,23 @@ jobs:
       - name: Smoke test (zero env, restart on same volume, explicit secrets)
         run: ./scripts/smoke.sh authorizer-oneclick:smoke
 
-      - name: Log in to GHCR
+      - name: Check Docker Hub credentials
+        if: github.event_name != 'pull_request'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
+            echo "::error::DOCKER_USERNAME / DOCKER_PASSWORD repo secrets are not set; cannot publish to Docker Hub." >&2
+            exit 1
+          fi
+
+      - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push (linux/amd64, linux/arm64)
         if: github.event_name != 'pull_request'

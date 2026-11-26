@@ -10,9 +10,9 @@ fills in defaults so it starts with zero configuration, and then `exec`s the rea
 (it runs as PID 1, as the non-root `authorizer` user, uid 1000).
 
 ```
-ghcr.io/authorizerdev/authorizer-oneclick:2.4.8    # Authorizer base version
-ghcr.io/authorizerdev/authorizer-oneclick:latest
-ghcr.io/authorizerdev/authorizer-oneclick:sha-<git sha>
+docker.io/lakhansamani/authorizer-oneclick:2.4.8    # Authorizer base version
+docker.io/lakhansamani/authorizer-oneclick:latest
+docker.io/lakhansamani/authorizer-oneclick:sha-<git sha>
 ```
 
 Images are multi-arch (`linux/amd64`, `linux/arm64`) and are built from
@@ -22,10 +22,10 @@ and bumping it publishes a new version tag and moves `latest`.
 
 ## Deploy
 
-[![Deploy on ZopDay](https://zop.dev/deploytozopday-inkhard.svg)](https://zop.dev/zopday/app/deploy?image=ghcr.io/authorizerdev/authorizer-oneclick:latest&port=8080)
+[![Deploy on ZopDay](https://zop.dev/deploytozopday-inkhard.svg)](https://zop.dev/zopday/app/deploy?image=docker.io/lakhansamani/authorizer-oneclick:latest&port=8080)
 
 ```markdown
-[![Deploy on ZopDay](https://zop.dev/deploytozopday-inkhard.svg)](https://zop.dev/zopday/app/deploy?image=ghcr.io/authorizerdev/authorizer-oneclick:latest&port=8080)
+[![Deploy on ZopDay](https://zop.dev/deploytozopday-inkhard.svg)](https://zop.dev/zopday/app/deploy?image=docker.io/lakhansamani/authorizer-oneclick:latest&port=8080)
 ```
 
 Deploy links are public. **Never put a secret in the link.** Non-secret settings can be added
@@ -42,7 +42,7 @@ After the first deploy:
 Locally:
 
 ```sh
-docker run -p 8080:8080 -v authorizer-data:/authorizer/data ghcr.io/authorizerdev/authorizer-oneclick:latest
+docker run -p 8080:8080 -v authorizer-data:/authorizer/data docker.io/lakhansamani/authorizer-oneclick:latest
 ```
 
 ## Environment variables
@@ -143,7 +143,8 @@ docker build -t authorizer-oneclick:dev .                 # or --build-arg AUTHO
 ```
 
 CI ([`.github/workflows/publish.yml`](.github/workflows/publish.yml)) runs the same smoke test,
-then publishes multi-arch images to GHCR on pushes to `main`, `v*` tags and manual runs
+then publishes multi-arch images to Docker Hub (`docker.io/lakhansamani/authorizer-oneclick`,
+using the `DOCKER_USERNAME` / `DOCKER_PASSWORD` repo secrets) on pushes to `main`, `v*` tags and manual runs
 (`workflow_dispatch` takes an optional `authorizer_version`). Only the Dockerfile's pinned
 version moves `latest`.
 
