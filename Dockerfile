@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # One-click-deploy image for Authorizer v2: maps environment variables to the
 # CLI flags the binary requires (v2 reads no env vars). See README.md.
-ARG AUTHORIZER_VERSION=2.4.9
+ARG AUTHORIZER_VERSION=2.4.10
 FROM quay.io/authorizer/authorizer:${AUTHORIZER_VERSION}
 ARG AUTHORIZER_VERSION
 
